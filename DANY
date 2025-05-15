@@ -1,0 +1,239 @@
+from flask import Flask, redirect, render_template, render_template_string, request, url_for
+
+app = Flask(__name__)
+
+# HTML incrustado con estilo similar a la versión HTML anterior
+HTML = """
+<!DOCTYPE html>
+<html lang="es">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería Interactiva con Flask</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000033;
+            margin: 0;
+            padding: 0;
+            text-align: center; color: #ffffff;
+        }
+        h1 {
+            background-color: #000066; 
+            color: white;
+            padding: 20px;
+            margin: 0;
+        }
+        .galeria {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px;
+        }
+        .galeria img {
+            width: 700px;
+            margin: 10px;
+            border-radius: 10px;
+            border: 3px solid #007acc;
+            transition: transform 0.3s;
+        }
+        .galeria img:hover {
+            transform: scale(1.05);
+        }
+        .boton {
+            background-color: #000000;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .boton:hover {
+            background-color: #FF0000;
+        }
+        p {
+           text-align: justify;  /* Alineamos el texto de los párrafos */
+            margin: 20px auto;  /* Añadimos un margen para separar los párrafos */
+            width: 80%;  /* Establecemos un ancho para los párrafos */
+        }
+    </style>
+</head>
+<body>
+    <h1>🏟🏆🔴🔵Fútbol en la Piel🔴🔵🏆🏟</h1>
+    <p> tiene orígenes antiguos: en civilizaciones como China (juego "cuju") o en culturas mesoamericanas existían deportes con pelota. Sin embargo, el fútbol moderno nació en Inglaterra durante el siglo XIX.
+En 1863 se fundó en Londres la Football Association, que estableció las primeras reglas oficiales separando el fútbol del rugby.
+Desde ahí, el fútbol se expandió rápidamente por Europa y América, convirtiéndose en el deporte más popular del mundo.
+En 1930 se celebró el primer Mundial de Fútbol en Uruguay, consolidando su importancia global.
+Hoy, el fútbol no solo es un deporte: es un fenómeno cultural, económico y social que conecta a millones de personas en todo el planeta.
+    <p>El fútbol es uno de los deportes más populares del mundo.
+Es practicado en prácticamente todos los países del mundo, los cuales se dan cita cada cuatro años 
+para disputarse la copa mundial, y mantienen a lo largo del año sus distintas ligas regulares.
+Se estima que el fútbol tiene alrededor de 250 millones de jugadores en todo el mundo, y que moviliza alrededor de 1.800 millones 
+de interesados y fanáticos en el globo entero.
+Es uno de los deportes olímpicos, y su jefatura internacional la ejerce la Federación Internacional de Asociaciones de Fútbol (o FIFA, por sus siglas en francés).
+    </p>
+
+</body>
+    <body>
+        <h1>Pelé (Brasil) – Considerado el "Rey" del fútbol.</h1>
+            <img src="https://img.piri.net/mnresize/900/-/resim/upload/2017/11/06/10/58/aaa827e5pixfull_1427273846powhjav1bbva0ym.jpg" alt="Imagen" width="30%">
+                <p>Pelé fue un famoso futbolista brasileño, considerado uno de los mejores jugadores de todos los tiempos. Nació el 23 de octubre de 1940 y falleció 
+                el 29 de diciembre de 2022. Destacó por su gran habilidad, velocidad y capacidad goleadora. Jugó la mayor parte de su carrera en el Santos FC y también 
+                en el New York Cosmos. Con la selección de Brasil ganó tres Copas del Mundo (1958, 1962 y 1970), siendo el único jugador en lograrlo. Anotó más de 1,000 
+                goles en su carrera y se convirtió en un ícono mundial del fútbol.
+    </body>
+
+            <body>
+            </head>
+                <h1>Diego Maradona (Argentina) – Genio total, famoso por su talento único y su "Mano de Dios".</h1> 
+                <img src="https://inforama.com.ar/wp-content/uploads/2023/11/maradona.jpg" alt="Imagen" width="40%"> 
+                
+                <p>Diego Armando Maradona (Lanús, Buenos Aires, 30 de octubre de 1960-Dique Luján, Buenos Aires, 25 de noviembre de 2020) fue 
+                un futbolista, entrenador y presentador argentino.[1]​[8]​ Como jugador, se desempeñó en la posición de mediocampista ofensivo o delantero, siendo 
+                considerado por numerosos especialistas,[9]​[10]​ exfutbolistas y personalidades internacionales[11]​ como «uno de los mejores futbolistas en la historia
+                <head><title>Mostrar imagen</title></head>
+            <body>
+                <h1>Johan Cruyff (Países Bajos) – Revolucionó el juego con su visión y técnica.</h1>
+                <img src="https://www.footiecentral.com/wp-content/uploads/2016/03/johan-cryuff-dies-at-68-in-2016.jpg" alt="Imagen" width="20%>
+
+                <p>Johan Cruyff fue un legendario futbolista y entrenador neerlandés, considerado uno de los más influyentes en la 
+                historia del fútbol. Como jugador, brilló en el Ajax y el FC Barcelona, ganó tres Balones de Oro y fue el líder del “fútbol total” con la selección 
+                de los Países Bajos. Como entrenador, revolucionó al FC Barcelona con su estilo ofensivo y formó el famoso “Dream Team”. Su legado transformó la manera de jugar y 
+                entender el fútbol moderno.
+
+            <body>
+                <img src="https://i.pinimg.com/originals/e1/6f/c2/e16fc2425b1384f914feee5b665e7b41.jpg" alt="Imagen" width="20%">
+                <p>Johan Cruyff fue un legendario futbolista y entrenador neerlandés, considerado uno de los más influyentes en la 
+                historia del fútbol. Como jugador, brilló en el Ajax y el FC Barcelona, ganó tres Balones de Oro y fue el líder del “fútbol total” con la selección 
+                de los Países Bajos. Como entrenador, revolucionó al FC Barcelona con su estilo ofensivo y formó el famoso “Dream Team”. Su legado transformó la manera de jugar y 
+                entender el fútbol moderno.
+
+            <body>
+                <h1>Zinedine Zidane (Francia) – Mítico mediocampista con elegancia y liderazgo.</h1>
+                <img src="https://i.pinimg.com/originals/e1/6f/c2/e16fc2425b1384f914feee5b665e7b41.jpg" alt="Imagen" width="20%">
+                <p>Zinedine Zidane es un exfutbolista y entrenador francés, considerado uno de los grandes del fútbol mundial. Nació el 
+                23 de junio de 1972. Como jugador, fue famoso por su elegancia, visión de juego y técnica. Jugó en clubes como la Juventus y 
+                el Real Madrid, y ganó el Balón de Oro en 1998. Con la selección de Francia ganó la Copa del Mundo en 1998 y la Eurocopa en 2000. Como 
+                entrenador del Real Madrid, logró un histórico tricampeonato de la Champions League (2016, 2017 y 2018). Su legado 
+                destaca tanto en el campo como en el banquillo.</p>
+
+            <body>
+                <h1>Ronaldinho (Brasil) – Talento natural, magia en cada toque.</h1>
+                <img src="https://th.bing.com/th/id/OIP.XreK2o5eIIXSbVYK-cO72wHaLG?cb=iwc1&rs=1&pid=ImgDetMain" alt="Imagen" width="20%">
+                <p>Ronaldinho era conocido por su excepcional control del balón, regates impredecibles y creatividad en el campo. Popularizó 
+                movimientos como la "elástica" y la "espaldinha", y su sonrisa constante reflejaba su amor por el juego. Su influencia 
+                fue crucial para revitalizar al FC Barcelona a mediados de los 2000, y es ampliamente recordado como uno de los futbolistas más 
+                entretenidos y queridos por los aficionados</p>
+
+
+            <body>
+                <h1>Franz Beckenbauer (Alemania) – Ícono como defensor y líder.</h1>
+                <img src="https://www.diariodemexico.com/sites/default/files/inline-images/FRANZ.jpg" alt="Imagen" width="20%">
+                
+                <p>Franz Beckenbauer, apodado "El Kaiser", fue uno de los futbolistas y entrenadores más influyentes de la 
+                historia del fútbol. Nacido el 11 de septiembre de 1945 en Múnich, Alemania, y fallecido el 7 de enero de 
+                2024, Beckenbauer dejó una huella imborrable en el deporte, tanto dentro como fuera del campo.</p>
+
+:</p>
+    <button class="boton" onclick="document.getElementById('contenedorGaleria').style.display = 'flex'">💀🔥"No Quiero Sanar, Quiero Venganza" 💀🔥</button>
+    <div id="contenedorGaleria" class="galeria" style="display: none;">
+
+        <p>La frase "No quiero sanar, quiero venganza" no proviene originalmente de los aficionados del FC Barcelona, sino que se ha popularizado 
+        como un meme en redes sociales y ha sido adoptada por algunos hinchas como una forma irónica o exagerada de expresar frustración, deseo de 
+        revancha o pasión intensa por el equipo.</p>
+
+        <body>
+                <h1>😈Primera Venganza del Equipo Cule:☠️(Bayern de Múnich)☠️ 4-1</h1>
+        <img src="https://pbs.twimg.com/media/Gaml9tVWkAAdupg?format=jpg&name=small" alt="Foto Unsplash" width="20%">
+
+        <p>En la temporada 2024/25 de la UEFA Champions League, el FC Barcelona y el Bayern Múnich se enfrentaron en la fase de liga el 23 de octubre de 2024 en el Estadi 
+        Olímpic Lluís Companys. El Barcelona logró una victoria contundente de 4-1, destacando un triplete de Raphinha y un gol de Robert Lewandowski. Este resultado puso 
+        fin a una racha de seis derrotas consecutivas del Barça ante el Bayern en competiciones europeas.</p>
+
+        <body>
+                <h1>😈Segunda Venganza del Equipo Cule:☠️(Sport Lisboa e Benfica)☠️    5-4</h1>
+        <img src="https://mx24online.com/wp-content/uploads/2025/01/5d61c08b-160f-4330-beda-00b2e7090329.jpeg" alt="foto">
+
+        <p>El 21 de enero de 2025, el FC Barcelona protagonizó una de las remontadas más emocionantes de la UEFA Champions League al vencer 5-4 al Benfica en el Estádio da Luz, asegurando 
+        su clasificación a los octavos de final. Este encuentro es recordado como una de las remontadas más memorables del FC Barcelona en competiciones europeas, destacando la resiliencia y determinación 
+        del equipo bajo la dirección de Hansi Flick.</p>
+
+                <h1>😈Tercera Venganza del Equipo Cule:🔥☠️(Real Madrid Club de Fútbol)☠️ 5-2</h1>
+        <img src="https://pbs.twimg.com/media/GhH15VhWcAAEMWz.jpg:large" alt="DEPORTES">
+        <p>La Supercopa de España 2025 concluyó con una contundente victoria del FC Barcelona sobre el Real Madrid por 5-2, en una final disputada el 12 de enero en el estadio 
+        King Abdullah Sports City de Yeda, Arabia Saudita. Con este triunfo, el Barcelona alcanzó su 15º título en esta competición, consolidándose como el club más laureado 
+        del torneo.</p>
+
+                    <h1>🤔¿¿"Messi" Es el mejor de toda la historia??🤔</h1>
+            <p>Decir que Lionel Messi es el mejor del mundo depende del criterio que se use, pero muchos expertos, exfutbolistas y 
+            aficionados lo consideran así por varias razones:</p>
+<p>✔️8 Balones de Oro 🏆 (más que ningún otro jugador en la historia)</p>
+
+<p>✔️Campeón del mundo con Argentina en Catar 2022 🌍</p>
+
+<p>✔️Más de 800 goles oficiales en su carrera ⚽</p>
+
+<p>✔️Récords históricos en goles, asistencias y títulos(58 tutulos individuales)</p>
+
+<p>✔️Brilló tanto en clubes europeos (Barcelona y PSG) como en selecciones nacionales y ahora en la MLS con Inter Miami</p>
+
+<p>✔️Ha sido decisivo en finales importantes, tanto en clubes como con Argentina</p>
+
+<p>✔️Su estilo de juego es completo: regatea, asiste, define y lidera</p>
+
+<p>Sí, para millones de personas y con base en logros concretos, Lionel Messi es el mejor futbolista del 
+mundo y posiblemente de toda la historia.</p>
+            <img src="https://assets.goal.com/images/v3/bltaaa483e47da093c4/GettyImages-1450106798.jpg" alt="DEPORTES">
+
+
+    <h1>--------------------👑🌎 Lionel Messi🌎👑🐐--------------------</h1>
+            <img src="https://i.pinimg.com/originals/12/c9/9b/12c99bc38b6cea5a4b25de3eef44edb4.jpg" alt="DEPORTES">
+            <p>Lionel Messi (nacido el 24 de junio de 1987 en Rosario, Argentina) es considerado uno de 
+            los mejores futbolistas de todos los tiempos. Es conocido por su increíble habilidad con el balón, visión de juego, regate, y 
+            capacidad goleadora. Su carrera ha sido marcada por numerosos títulos y récords tanto a nivel de 
+            clubes como de selecciones.</p>
+
+<p>✅🏟️ FC Barcelona (2000–2021):
+Pasó más de 20 años en el club, donde ganó 35 títulos, incluidos 4 Champions League y 10 Ligas. Se convirtió en el máximo goleador histórico del club con 672 goles.</p>
+
+<p>✅🏟️ Paris Saint-Germain (2021–2023):
+Continuó su carrera en Europa ganando títulos nacionales y manteniéndose como una figura clave.</p>
+
+<p>✅🏟️ Inter Miami (2023–presente):
+Lleva su talento a la MLS, atrayendo atención mundial y ganando la Leagues Cup.</p>
+
+<p>✅🏆Ganó la Copa América 2021, la Finalissima 2022, y la Copa del Mundo 2022, consolidando su legado 
+también con la selección.</p>
+
+<p>✅🏆Es el máximo goleador histórico de Argentina.</p>
+
+<p>✅🏆8 Balones de Oro (récord absoluto)</p>
+
+<p>✅🏆Más de 800 goles oficiales en su carrera</p>
+
+<p>✅🏆Varios récords de asistencias y goles en una temporada</p>
+
+<p>✅🏆Considerado por muchos como el mejor jugador de fútbol de la historia</p>
+
+<p>Messi es también una figura influyente fuera del campo: ha apoyado causas benéficas a través de 
+su fundación, es embajador de UNICEF, y ha mantenido una imagen humilde a pesar de su 
+fama global(Messi is the GOAT 🐐).</p>
+            <img src="https://s.france24.com/media/display/451ed2b8-eed6-11ea-afdd-005056bf87d6/w:1280/p:16x9/messi-1805.jpg" alt="DEPORTES">
+            <img src="https://i.ytimg.com/vi/mmGxbIaBC08/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAxMuoQjgsmMyHnf3ihRvunGE5Ofw" alt="DEPORTES">
+
+            <p>🤔Creadores🤔:</p>
+            <p>🔥😎DANNY😎💨</p>
+            <p>🔥😎CRISTIAN😎💨</p>
+
+    </div>
+</body>
+</html>
+"""
+
+@app.route("/")
+def galeria():
+    return render_template_string(HTML)
+if __name__ == "__main__":
+    app.run(debug=True)
